@@ -6,13 +6,15 @@ import { FilmByIdResponse } from './interfaces/film/film-get-by-id.response';
 import { GetFilmsResponse } from './interfaces/film/get-films-response';
 import { GetStartPage } from './interfaces/film/get-start-page-films';
 import { GetFilmPage } from './interfaces/film/get-film-page.response';
+import { GetGenreResponse } from './interfaces/film/get-genre.response';
+import { GetMainPage } from './interfaces/film/get-main-page.response';
 
 @Controller('movies')
 export class FilmController {
   constructor(@Inject('FILM_SERVICE') private readonly client: ClientProxy) {}
 
   @Get('/search?')
-  @ApiTags('film')
+  @ApiTags('Film')
   @ApiResponse({ 
     status: 200, 
     description: 'get films by search params',    
@@ -31,7 +33,7 @@ export class FilmController {
   }
 
   @Get('/page/:page')
-  @ApiTags('film')
+  @ApiTags('Film')
   @ApiResponse({ 
     status: 200, 
     description: 'get 20 films for page',    
@@ -42,7 +44,7 @@ export class FilmController {
   }
 
   @Get('/top')
-  @ApiTags('film')
+  @ApiTags('Film')
   @ApiResponse({
     status: 200, 
     description: 'get top 10 films',    
@@ -52,8 +54,19 @@ export class FilmController {
     return this.client.send('get_top_ten', '');
   }
 
+  @Get('/genres')
+  @ApiTags('Genre')
+  @ApiResponse({
+    status: 200, 
+    description: 'Return all genres in db',    
+    type: [GetGenreResponse]
+  })
+  getAllGenres(): Observable<GetGenreResponse[]> {
+    return this.client.send('get_genres', '');
+  }
+
   @Get('/newFilms')
-  @ApiTags('film')
+  @ApiTags('Film')
   @ApiResponse({
     status: 200, 
     description: 'get 10 latests films',    
@@ -64,7 +77,7 @@ export class FilmController {
   }
 
   @Get('/startPage')
-  @ApiTags('film')
+  @ApiTags('Film')
   @ApiResponse({
     status: 200, 
     description: 'get startPage',    
@@ -74,8 +87,19 @@ export class FilmController {
     return this.client.send('get_start_page', '');
   }
 
+  @Get('/mainPage')
+  @ApiTags('Film')
+  @ApiResponse({
+    status: 200, 
+    description: 'get mainPage',    
+    type: GetMainPage
+  })
+  getMainPage() {
+    return this.client.send('get_main_page', '');
+  }
+
   @Get('/:id')
-  @ApiTags('film')
+  @ApiTags('Film')
   @ApiResponse({ 
     status: 200, 
     description: 'get film page by film id',    

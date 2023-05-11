@@ -43,4 +43,9 @@ export class FilmController {
   getStartPage() {
     return this.filmService.getStartPage();
   }
+
+  @MessagePattern('get_main_page')
+  getMainPage() {
+    return this.filmService.getMainPage();
+  }
 }

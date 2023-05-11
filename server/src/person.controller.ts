@@ -8,7 +8,7 @@ export class PersonController {
   constructor(@Inject('FILM_SERVICE') private readonly client: ClientProxy) {}  
 
   @Get('/:id')
-  @ApiTags('person')
+  @ApiTags('Person')
   @ApiResponse({ 
     status: 200, 
     description: 'get person information',    

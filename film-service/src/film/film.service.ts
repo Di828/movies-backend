@@ -85,6 +85,40 @@ export class FilmService {
         return result;
     }
 
+    async getMainPage() {
+        let movies = {};
+        const moviesLimit = 15;
+        movies['russian'] = await this.getFilmByFilter({
+            include : [{model : Person}, {model : Genre}, {
+                model : Country, as: "countries", where: {
+                    name: {
+                        [Op.eq]: ('Россия')
+                    }
+                }}],            
+            limit : moviesLimit
+        });
+        
+        movies['cartoons'] = await this.getFilmByFilter({
+            include : {all : true},
+            where: {
+                type: 'cartoon'
+            },
+            limit : moviesLimit
+        });
+
+        movies['foreign'] = await this.getFilmByFilter({
+            include : [{model : Person}, {model : Genre}, {
+                model : Country, as: "countries", where: {
+                    name: {
+                        [Op.ne]: ('Россия')
+                    }
+                }}],            
+            limit : moviesLimit
+        })
+
+        return movies;
+    }
+
     async getStartPage() {
         let movies = {};
         const moviesLimit = 15;
@@ -115,7 +149,7 @@ export class FilmService {
         const foundMovies = await this.filmRepository.findAll(filter);
 
         return this.getResponse(foundMovies);
-    }  
+    }      
 
     async getFilmsSortedBy(filter : string, limit : number) : Promise<GetFilmsForPage[]> {        
         const foundMovies = await this.filmRepository.findAll({
@@ -189,7 +223,7 @@ export class FilmService {
             alternativeName: data.alternativeName,
             year: data.year,                    
             type: data.type,
-            ageRating: data.ageRating,                
+            ageRating: data.ageRating || 0,                
             kprating: data.kprating,            
             movieLength: data.movieLength,                        
             poster: data.poster,
@@ -213,7 +247,7 @@ export class FilmService {
             kprating: data.kprating,
             kpvotes: data.kpvotes,
             movieLength: data.movieLength,
-            ageRating: data.ageRating,
+            ageRating: data.ageRating || 0,
             trailer: data.trailer,
             poster: data.poster,
             genres: [],

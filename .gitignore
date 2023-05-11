@@ -5,6 +5,7 @@
 /data_miner
 /package_folder
 /db
+/docker-entrypoint-initdb.d
 
 # Logs
 logs
