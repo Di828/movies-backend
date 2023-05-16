@@ -13,6 +13,7 @@ import { AuthController } from './auth/auth.controller';
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: 'postgres',
+           // 'localhost',
       port: 5432,
       username: 'postgres',
       password: '123123',

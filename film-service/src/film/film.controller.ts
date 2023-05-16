@@ -15,7 +15,7 @@ export class FilmController {
   }  
 
   @MessagePattern('get_films_by_params')
-  getFilmsByParams(searchParams: string) : Promise<GetFilmsForPage[]>{
+  getFilmsByParams(searchParams) : Promise<GetFilmsForPage[]>{
     return this.filmService.getFilmsByParams(searchParams);
   }
 

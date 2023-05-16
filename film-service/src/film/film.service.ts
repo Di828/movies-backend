@@ -65,17 +65,48 @@ export class FilmService {
         return result;
     }
   
-    async getFilmsByParams(searchParams) : Promise<GetFilmsForPage[]> {        
-        const searchOptions = {include : [{model : Person}], where: [], limit : this.filmsLimitInSearch};
+    async getFilmsByParams(searchParams) : Promise<GetFilmsForPage[]> {   
+        const page = searchParams.page || 1;
+        const searchOptions = {   
+            attributes: ['film_id'],
+            group: 'Film.film_id',
+            through: {
+                attributes: [],
+              },
+            include : [
+            ], 
+            where: [],
+            offset: (page - 1) * this.filmsLimitInSearch,            
+            limit: this.filmsLimitInSearch,
+            subQuery : false,                        
+        };
         searchOptions.include.push(this.processGenreOptions(searchParams.genre));
         searchOptions.include.push(this.processCountryOptions(searchParams.country));
 
         if (searchParams.year){
-            searchOptions.where.push({year : {[Op.or]: searchParams.year.split(' ')}});
+            searchOptions.where.push({year : {[Op.or]: searchParams.year.split('+')}});
         }
 
-        const foundMovies = await this.filmRepository.findAll(searchOptions);
-        const transformedData = this.transformDataForResponse(foundMovies);
+        const foundMoviesId = await this.filmRepository.findAll(searchOptions);
+        const filmsId = [];
+        foundMoviesId.forEach(film => {
+            filmsId.push(film.dataValues.film_id);
+        })
+
+        if (filmsId.length == 0){
+            return [];
+        }
+
+        const foundMovies = await this.filmRepository.findAll({
+            include: {all : true},
+            where: {
+                film_id: {
+                    [Op.or]: filmsId
+                }
+            }
+        });
+
+        const transformedData = this.transformDataForResponse(foundMovies);        
         let result: GetFilmsForPage[] = [];
 
         for (let i = 0; i < transformedData.length; i++){
@@ -178,33 +209,41 @@ export class FilmService {
     processGenreOptions(genreOptions) : any {
         if (genreOptions){
             return {
-                model : Genre,
+                model : Genre,   
+                attributes: [],             
+                through: {
+                    attributes: [],
+                  },
                 as: 'genres',
                 where: {
                     name: {
-                        [Op.or]: genreOptions.split(' ')
+                        [Op.or]: genreOptions.split('+')
                     }
                 }
             }
         }
     
-        return { model: Genre }
+        return { model: Genre, attributes: [], through: {attributes: []}}
     }
 
     processCountryOptions(countryOptions) : any {
         if (countryOptions){
             return {
-                model : Country,
+                model : Country,  
+                attributes: [], 
+                through: {
+                    attributes: []
+                },
                 as: 'countries',
                 where: {
                     name: {
-                        [Op.or]: countryOptions.split(' ')
+                        [Op.or]: countryOptions.split('+')
                     }
                 }
             }
         }
 
-        return { model: Country }
+        return { model: Country, attributes: [], through: {attributes: []}}
     }
 
     transformDataForResponse(movies) : GetFilmByIdDto[] {

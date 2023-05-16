@@ -32,8 +32,8 @@ import { FilmPersons } from './person/film-actor.model';
   // }),
   SequelizeModule.forRoot({
     dialect: 'postgres',
-    host:'localhost', 
-         // 'postgres',
+    host://'localhost', 
+          'postgres',
     port: 5432,
     username: 'postgres',
     password: '123123',

@@ -8,8 +8,7 @@ export class GenreController {
 
     @MessagePattern('get_genres')
     getAllGenres() : Promise<any[]> {
-        const result = this.genreService.getAllGenres();
-        console.log(result);
+        const result = this.genreService.getAllGenres();        
         return result;
   }  
 }

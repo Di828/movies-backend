@@ -65,7 +65,7 @@ export class TransferService {
         const staff = parsedData.persons;        
   
         for (let i = 0; i < staff.length; i++){
-            let person = await this.personService.getPersonByName(staff[i].name);
+            let person = await this.personService.getPersonByNameAndProfession(staff[i].name, staff[i].enProfession);
             if (!person) {
                 person = await this.personService.addPerson(staff[i]);
             }  

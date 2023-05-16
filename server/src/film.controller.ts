@@ -23,12 +23,14 @@ export class FilmController {
   @ApiQuery({ name: 'genre', required: false })
   @ApiQuery({ name: 'year', required: false })
   @ApiQuery({ name: 'country', required: false })
+  @ApiQuery({ name: 'page', required: false })  
   getFilmBySearchParams(    
     @Query('genre') genre: string,
-    @Query('year') year: number,
-    @Query('country') country : string
+    @Query('year') year: string,
+    @Query('country') country : string,
+    @Query('page') page : number,    
   ): Observable<GetFilmsResponse> {    
-    let searchParams = {genre : genre, year : year, country : country }
+    let searchParams = {genre : genre, year : year, country : country, page : page }
     return this.client.send('get_films_by_params', searchParams);
   }
 
@@ -63,6 +65,17 @@ export class FilmController {
   })
   getAllGenres(): Observable<GetGenreResponse[]> {
     return this.client.send('get_genres', '');
+  }
+
+  @Get('/countries')
+  @ApiTags('Country')
+  @ApiResponse({
+    status: 200, 
+    description: 'Return all countries in db',    
+    type: [GetGenreResponse]
+  })
+  getAllCountries(): Observable<GetGenreResponse[]> {
+    return this.client.send('get_countries', '');
   }
 
   @Get('/newFilms')
