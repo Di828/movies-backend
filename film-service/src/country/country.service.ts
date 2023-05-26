@@ -15,9 +15,6 @@ export class CountryService {
     }
 
     async getAllCountries(){
-        return await this.countryRepository.findAll({
-            attributes: ["name"],
-            group: "name",
-          });
+        return await this.countryRepository.findAll();
     }
 }

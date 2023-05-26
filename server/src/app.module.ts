@@ -5,6 +5,8 @@ import { MineController } from './mine.controller';
 import { PersonController } from './person.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
+import { GenresController } from './genre.controller';
+import { CountryController } from './country.controller';
 
 @Module({
   imports: [
@@ -41,7 +43,7 @@ import { AuthController } from './auth.controller';
       }
     }),
   ],
-  controllers: [FilmController, MineController, PersonController, AuthController],
+  controllers: [FilmController, MineController, PersonController, AuthController, GenresController, CountryController],
   providers: [],
 })
 export class AppModule {}
