@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { GenresController } from './genre.controller';
 import { CountryController } from './country.controller';
+import { ReviewController } from './review.controller';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { CountryController } from './country.controller';
         transport: Transport.RMQ,
         options: {
           urls://['amqp://localhost:5672'], 
-                ['amqp://rabbitmq:5672'],
+               ['amqp://rabbitmq:5672'],
           queue: 'film_queue',
           queueOptions: {
             durable: false,
@@ -43,7 +44,7 @@ import { CountryController } from './country.controller';
       }
     }),
   ],
-  controllers: [FilmController, MineController, PersonController, AuthController, GenresController, CountryController],
+  controllers: [FilmController, MineController, PersonController, AuthController, GenresController, CountryController, ReviewController],
   providers: [],
 })
 export class AppModule {}

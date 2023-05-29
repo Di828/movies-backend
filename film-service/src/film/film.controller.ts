@@ -54,6 +54,17 @@ export class FilmController {
         return this.filmService.addFilm(addFilmDto);
     }
 
+    @MessagePattern('add_genres_to_film')
+    addGenresToFilm(addGenresToFilmDto) {
+        return this.filmService.addGenresToFilm(addGenresToFilmDto);
+    }
+
+    @MessagePattern('add_countries_to_film')
+    addCountriesToFilm(addCountriesToFilmDto) {
+        return this.filmService.addCountriesToFilm(addCountriesToFilmDto);
+    }
+
+
     @MessagePattern('update_film')
     updateFilm(updateFilmDto) {
         return this.filmService.updateFilm(updateFilmDto);

@@ -1,5 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/sequelize';
+import { Test } from '@nestjs/testing';
 import { PersonController } from './person.controller';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { PersonService } from './person.service';

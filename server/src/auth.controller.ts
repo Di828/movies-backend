@@ -67,7 +67,7 @@ export class AuthController {
     })        
     @ApiBearerAuth()
     @Roles('Admin')
-    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/adminSecret')
     secretPlaceForAdminsOnly() {
         return {message: "It looks like you are admin!!!"} ;

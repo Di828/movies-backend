@@ -51,7 +51,7 @@ export class AuthService {
         const salt = 5; 
         const hashPassword = await bcrypt.hash(registrationDto.password, salt);
 
-        const user = await this.userService.createUser({...registrationDto, password : hashPassword, role : 'Admin'});
+        const user = await this.userService.createUser({...registrationDto, password : hashPassword, role : 'User'});
         
         const token = await this.generateToken(user);
         return {

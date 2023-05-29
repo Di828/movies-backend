@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { GetFilmsResponse } from './interfaces/film/get-films-response';
 import { GetStartPage } from './interfaces/film/get-start-page-films';
@@ -9,6 +9,11 @@ import { GetGenreResponse } from './interfaces/genre/get-genre.dto';
 import { GetMainPage } from './interfaces/film/get-main-page.response';
 import { AddFilmDto } from './interfaces/film/add-film.dto';
 import { setUncaughtExceptionCaptureCallback } from 'process';
+import { Roles } from './guards/role-auth.decorator';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/role.guard';
+import { AddGenresToFilm } from './interfaces/film/add-genres-to-film.dto';
+import { AddCountriesToFilm } from './interfaces/film/add-countries-to-film.dto';
 
 @Controller('movies')
 export class FilmController {
@@ -54,13 +59,8 @@ export class FilmController {
         return this.client.send('get_films', page);
     }
 
+    @ApiExcludeEndpoint()
     @Get('/country')
-    @ApiTags('Country')
-    @ApiResponse({
-        status: 200, 
-        description: 'Return all countries in db',    
-        type: [GetGenreResponse]
-    })
     getAllCountries(): Observable<GetGenreResponse[]> {
         return this.client.send('get_countries', '');
     }
@@ -109,13 +109,8 @@ export class FilmController {
         return this.client.send('get_main_page', '');
     }
 
-    @Get('/genres')
-    @ApiTags('Film')
-    @ApiResponse({
-        status: 200, 
-        description: 'Return all genres in db',    
-        type: [GetGenreResponse]
-    })
+    @ApiExcludeEndpoint()
+    @Get('/genres')    
     getAllGenres(): Observable<GetGenreResponse[]> {
       return this.client.send('get_genres', '');
     }
@@ -131,6 +126,9 @@ export class FilmController {
         return this.client.send('get_film_page', id);
     }
 
+    @ApiBearerAuth()
+    @Roles('Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
     @ApiTags('Film')
     @ApiResponse({ 
@@ -141,6 +139,39 @@ export class FilmController {
         return this.client.send('add_film', addFilmDto);
     }
 
+    @ApiBearerAuth()
+    @Roles('Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Put('/:id/genres')
+    @ApiTags('Film')
+    @ApiResponse({ 
+        status: 200, 
+        description: 'add genres to film',
+    })
+    addGenresToFilm(@Param('id') id : number,
+                    @Body() genresDto : AddGenresToFilm) {          
+        genresDto.film_id = id;
+        return this.client.send('add_genres_to_film', genresDto);
+    }
+
+    @ApiBearerAuth()
+    @Roles('Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Put('/:id/countries')
+    @ApiTags('Film')
+    @ApiResponse({ 
+        status: 200, 
+        description: 'add countries to film',
+    })
+    addCountriesToFilm(@Param('id') id : number,
+                       @Body() countriesDto : AddCountriesToFilm) {          
+        countriesDto.film_id = id;
+        return this.client.send('add_countries_to_film', countriesDto);
+    }
+
+    @ApiBearerAuth()
+    @Roles('Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/:id')
     @ApiTags('Film')
     @ApiResponse({ 
@@ -153,6 +184,9 @@ export class FilmController {
         return this.client.send('update_film', data);
     }
 
+    @ApiBearerAuth()
+    @Roles('Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('/:id')
     @ApiTags('Film')
     @ApiResponse({ 

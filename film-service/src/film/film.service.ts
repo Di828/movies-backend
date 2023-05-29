@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op, where } from 'sequelize';
 import { Country } from '../country/country.model';
@@ -10,12 +10,15 @@ import { GetFilmsForPage } from './dto/get-films-for-page-dto';
 import { Film } from './film.model';
 import { GetFilmPage } from './dto/get-film-page-dto';
 import { AddFilmDto } from './dto/add-film-dto';
-
+import { FilmGenres } from '../genre/film-genre-model';
+import { FilmCountries } from '../country/film-country.model';
 
 @Injectable()
 export class FilmService {
 
     constructor(@InjectModel(Film) private filmRepository : typeof Film,
+                @InjectModel(FilmGenres) private filmGenresRepository : typeof FilmGenres,
+                @InjectModel(FilmCountries) private filmCountriesRepository : typeof FilmCountries,
                 private personService : PersonService){}
 
     filmsLimitInSearch = 20;
@@ -23,6 +26,26 @@ export class FilmService {
 
     async addFilm(addFilmDto : AddFilmDto) : Promise<Film> {      
         return await this.filmRepository.create(addFilmDto);
+    }
+
+    async addGenresToFilm(addGenresToFilmDto) {
+        const genres = addGenresToFilmDto.genre_id;
+        const film_id = addGenresToFilmDto.film_id;
+        genres.forEach(async element => {
+            await this.filmGenresRepository.create({film_id : film_id, genre_id : element});
+        });
+
+        return {message : 'genres succesfully added'};
+    }
+
+    async addCountriesToFilm(addCountriesToFilmDto) {
+        const countries = addCountriesToFilmDto.country_id;
+        const film_id = addCountriesToFilmDto.film_id;
+        countries.forEach(async element => {
+            await this.filmCountriesRepository.create({film_id : film_id, country_id : element});
+        });
+
+        return {message : 'countries succesfully added'};
     }
 
     async updateFilm(updateFilmdDto) {
@@ -56,7 +79,7 @@ export class FilmService {
     }
 
     async getFilmById(id : number) : Promise<GetFilmByIdDto> {
-        const foundMovie = await this.filmRepository.findOne({where:{film_id : id}, include : {all : true}})
+        const foundMovie = await this.filmRepository.findOne({where:{film_id : id}, include : {all : true}})        
         const result = this.transformDataForSingleMovie(foundMovie);        
 
         return result;
@@ -391,7 +414,8 @@ export class FilmService {
             poster: data.poster,
             genres: [],
             countries: [],
-            staff: []
+            staff: [],
+            reviews : data.reviews,
         }  
 
         data.genres.forEach(genre => {
@@ -404,7 +428,7 @@ export class FilmService {
 
         data.staff.forEach(person => {
             getFilmDto.staff.push(this.personService.transformToGetPersonDto(person));
-        });        
+        });                
 
         return getFilmDto;
     }

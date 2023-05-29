@@ -1,10 +1,13 @@
-import { Body, Controller, Get, HttpCode, Inject, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Inject, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AddGenreDto } from './interfaces/genre/add-genre.dto';
 import { UpdateGenreDto } from './interfaces/genre/update-genre.dto';
 import { GetGenreResponse } from './interfaces/genre/get-genre.dto';
 import { Observable } from 'rxjs';
+import { Roles } from './guards/role-auth.decorator';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/role.guard';
 
 @Controller('genres')
 export class GenresController {
@@ -21,6 +24,9 @@ export class GenresController {
       return this.client.send('get_genres', '');
     }
     
+    @ApiBearerAuth()
+    @Roles('Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()  
     @ApiTags('Genre')
     @ApiResponse({
@@ -32,6 +38,9 @@ export class GenresController {
         return this.client.send('add_genre', addGenreDto);
     }
 
+    @ApiBearerAuth()
+    @Roles('Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put()  
     @ApiTags('Genre')
     @ApiResponse({
