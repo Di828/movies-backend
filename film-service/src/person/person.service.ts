@@ -45,8 +45,7 @@ export class PersonService {
 
     async getPersonByParams(params) : Promise<GetPersonBySearchParams[]> {  
 
-        let nameFilter = this.parseNameParams(params.name);
-        console.log(nameFilter);
+        const nameFilter = this.parseNameParams(params.name);        
 
         let searchParams = {        
             name : {
@@ -99,7 +98,7 @@ export class PersonService {
     }
 
     transferDataForSliderDto(data) : GetPersonForSliderDto {
-        let dataName = data.name.split(' ');
+        const dataName = data.name.split(' ');
         let lastName = '';
         for (let i = 1; i < dataName.length; i++){
             lastName += dataName[i] + ' ';

@@ -24,8 +24,7 @@ import { Review } from './review/review.model';
   }),
   SequelizeModule.forRoot({
     dialect: 'postgres',
-    host://'localhost', 
-          'postgres',
+    host: 'postgres',
     port: 5432,
     username: 'postgres',
     password: '123123',

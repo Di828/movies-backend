@@ -79,37 +79,32 @@ describe("Film service", () => {
     };  
 
     const mockSequelizeFilmCountriesRepository = {        
-    };  
-
-    const mockPersonService = {        
-    };
+    };      
   
     beforeEach(async () => {
-      const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          FilmService,
-          { provide: getModelToken(Film), useValue: mockSequelizeFilmRepository },     
-          { provide: getModelToken(FilmGenres), useValue: mockSequelizeFilmGenresRepository},
-          { provide: getModelToken(FilmCountries), useValue: mockSequelizeFilmCountriesRepository},          
-        ],
-      }).useMocker((token) => {        
-        if (token === PersonService) {
-          return {            
-          };
-        }
-        if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
-          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
-          return new Mock();
-        }
-      })
-      .compile();
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [
+                FilmService,
+                { provide: getModelToken(Film), useValue: mockSequelizeFilmRepository },     
+                { provide: getModelToken(FilmGenres), useValue: mockSequelizeFilmGenresRepository},
+                { provide: getModelToken(FilmCountries), useValue: mockSequelizeFilmCountriesRepository}          
+            ],
+        }).useMocker((token) => {        
+            if (token === PersonService) {
+                return {};
+            }
+            if (typeof token === 'function') {
+                const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
+                const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+                return new Mock();
+            }
+        }).compile();
   
-      filmService = module.get<FilmService>(FilmService);
+        filmService = module.get<FilmService>(FilmService);
     });
   
     it("should be defined", () => {
-      expect(filmService).toBeDefined();
+        expect(filmService).toBeDefined();
     });
   
 
